@@ -1,0 +1,49 @@
+#include <iostream>
+
+using namespace std;
+
+struct test {
+	int data;
+	test * nast;
+};
+
+struct test_gio {
+	test* glowa;
+	test* ogon;
+};
+
+void inicjalizuj(test_gio &lista) {
+	lista.glowa = new test{0,nullptr};
+	lista.ogon = lista.glowa;
+}
+
+void dod_na_koniec(test_gio &lista, int dana) {
+	lista.ogon->nast = new test;
+	lista.ogon = lista.ogon->nast;
+	lista.ogon->data = dana;
+	lista.ogon->nast = nullptr;
+};
+
+void dod_na_poczatek(test_gio &lista, int dana) {
+	test* pom = lista.glowa;
+	lista.glowa = new test;
+	lista.glowa->data = dana;
+	lista.glowa->nast = pom;
+};
+
+int main() {
+	
+	test_gio lista_testowa;
+
+	inicjalizuj(lista_testowa);
+
+	for (int i = 1; i < 4; i++) {
+		dod_na_koniec(lista_testowa, i);
+	}
+
+	for (int i = -5; i < 0; i++) {
+		dod_na_poczatek(lista_testowa, i);
+	}
+
+	return 0;
+}
