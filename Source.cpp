@@ -4,25 +4,25 @@
 
 using namespace std;
 
-//Struktura ksi¹¿ki
+//Struktura ksiÄ…Å¼ki
 struct ksiazka_ele {
 	string author;
 	string title;
 	ksiazka_ele *next;
 	//ksiazka_ele() { next = nullptr; };
 };
-//Pocz¹tek i koniec listy ksi¹¿ek
+//PoczÄ…tek i koniec listy ksiÄ…Å¼ek
 struct ksiazka {
 	ksiazka_ele *head;
 	ksiazka_ele *tail;
 };
 
-//Lista wskaŸników na ksi¹¿ki
+//Lista wskaÅºnikÃ³w na ksiÄ…Å¼ki
 struct wsk_ksiazka_ele {
 	ksiazka_ele * ptr_to_ksiazka;
 	wsk_ksiazka_ele * next;
 };
-//Pocz¹tek i koniec listy wskaŸników na ksi¹¿ki
+//PoczÄ…tek i koniec listy wskaÅºnikÃ³w na ksiÄ…Å¼ki
 struct wsk_ksiazka {
 	wsk_ksiazka_ele * head;
 	wsk_ksiazka_ele * tail;
@@ -34,7 +34,7 @@ struct lista_ele {
 	wsk_ksiazka *list_ptr; //sortowana wedlug nazwiska
 	lista_ele *next;
 };
-//Pocz¹tek i koniec listy etykiet
+//PoczÄ…tek i koniec listy etykiet
 struct lista {
 	lista_ele *head;
 	lista_ele *tail;
@@ -81,7 +81,7 @@ int main() {
 		//etykiety
 		etykieta = rec.substr(pos + 2);
 		do {
-				//wymyœliæ jak przeczytaæ tylko jedn¹ etykiete i ja wyizolowaæ i nie zapomnieæ reszty bo póŸniej do niej przejœæ
+				//wymyÅ›liÄ‡ jak przeczytaÄ‡ tylko jednÄ… etykiete i ja wyizolowaÄ‡ i nie zapomnieÄ‡ reszty bo pÃ³Åºniej do niej przejÅ›Ä‡
 				przeszukajEtykiety(wszystkieEtykiety, etykieta, to_dodac);
 				pos = rec.find(", ");
 				if (pos == std::string::npos)
@@ -99,7 +99,7 @@ int main() {
 	dodajKsiazke(wszystkieKsiazki, test3, test);
 
 
-	cout << "DOBRZE PRAWIE DOBRZE KURWA! KURWA!";
+	cout << "DOBRZE PRAWIE DOBRZE!";
 	return 0;
 }
 //TO KURWA DZIALA
