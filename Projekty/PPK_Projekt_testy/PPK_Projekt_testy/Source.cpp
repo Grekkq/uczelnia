@@ -44,7 +44,11 @@ ksiazka_ele* dodajKsiazke(ksiazka &ksiazkaGIO, string & autor, string & tytul);
 void przeszukajEtykiety(lista &listaGIO, string & etykieta, ksiazka_ele* ksiazka_do_dodania);
 lista_ele* dodajEtykiete(lista &listaGIO, string & etykieta);
 void dodajKsiazkeDoEtykiety(lista_ele* tu_dodaj, ksiazka_ele* ksiazka_do_dodania);
-void wyswietlPomoc(string program);
+void wyswietlPomoc(string const & program);
+void wypiszDoPliku(lista listaGIO, ofstream & plik);
+void plikWyjsciowy(string const & wyjscie, ofstream & plik);
+void plikWejsciowy(string const & wejscie, ifstream & plik);
+string wyswietlKsiazke(ksiazka_ele* to_wyswietlic);
 
 
 int main(int argc, char* argv[]) {
@@ -81,27 +85,21 @@ int main(int argc, char* argv[]) {
 	}
 
 	//Wczytanie pliku
-	ifstream plik;
-	plik.open(zrodlo);
-	if (!plik.good()) {
-		cerr << "Blad odczytu pliku wejsciowego";
-		exit(33);
-	}
+	ifstream plik_we;
+	plikWejsciowy(zrodlo, plik_we);
 
 	//Inicjalizacja struktur
-	{
 	ksiazka wszystkieKsiazki;
 		wszystkieKsiazki.head = nullptr;
 		wszystkieKsiazki.tail = nullptr;
 	lista wszystkieEtykiety;
 		wszystkieEtykiety.head = nullptr;
 		wszystkieEtykiety.tail = nullptr;
-	}
 
 	//Wczytanie danych
 	string rec;
 	string autor, tytul, etykieta;
-	while (getline(plik, rec)) {
+	while (getline(plik_we, rec)) {
 		//autor i tytul
 		size_t pos = rec.find("; ");
 		autor = rec.substr(0, pos);
@@ -141,18 +139,14 @@ int main(int argc, char* argv[]) {
 			//pos = rec.find(", ");
 		} while (etykieta.length());
 	}
-	plik.close();
-
-	//Zapisanie wczytanych danych
+	plik_we.close();
+	
+	//Utworzenie pliku wyjsciowego
 	ofstream plik_wy;
-	plik_wy.open(wyjscie);
-	if (!plik_wy.good()) {
-		cerr << "Blad zapisu pliku wyjsciowego";
-		exit(404);
-	}
-
-
-
+	plikWyjsciowy(wyjscie, plik_wy);
+	
+	//Zapisanie wczytanych danych
+	wypiszDoPliku(wszystkieEtykiety, plik_wy);
 
 	cout << "DOBRZE PRAWIE DOBRZE!";
 	return 0;
@@ -245,7 +239,7 @@ void dodajKsiazkeDoEtykiety(lista_ele* tu_dodaj, ksiazka_ele* ksiazka_do_dodania
 }
 
 //DZIA£A
-void wyswietlPomoc(string program)
+void wyswietlPomoc(string const & program)
 {
 	cerr << "Niepoprawne argumenty sprobuj: " << program << " -i \"Plik_wejsciowy.txt\" -o \"Plik_wyjsciowy.txt\" " << endl;
 	exit(69);
@@ -253,3 +247,38 @@ void wyswietlPomoc(string program)
 
 
 //PISZE SIE
+void wypiszDoPliku(lista listaGIO, ofstream & plik) {
+	lista_ele* etykiety_lista = listaGIO.head;
+	while (etykiety_lista) {
+		plik << etykiety_lista->label << ":\n";
+		wsk_ksiazka_ele* to_zapisac = etykiety_lista->list_ptr->head;
+		while (to_zapisac) {
+			plik << wyswietlKsiazke(to_zapisac->ptr_to_ksiazka);
+			to_zapisac = to_zapisac->next;
+		}
+		plik << "\n";
+		etykiety_lista = etykiety_lista->next;
+	}
+}
+
+//DZIA£A
+void plikWyjsciowy(string const & wyjscie, ofstream & plik) {
+	plik.open(wyjscie);
+	if (!plik.good()) {
+		cerr << "Blad zapisu pliku wyjsciowego";
+		exit(404);
+	}
+}
+
+//DZIA£A
+void plikWejsciowy(string const & wejscie, ifstream & plik) {
+	plik.open(wejscie,ios_base::app);
+	if (!plik.good()) {
+		cerr << "Blad odczytu pliku wejsciowego";
+		exit(33);
+	}
+}
+
+string wyswietlKsiazke(ksiazka_ele* to_wyswietlic) {
+	return "\t" + to_wyswietlic->author + "; " + to_wyswietlic->title +"\n";
+}

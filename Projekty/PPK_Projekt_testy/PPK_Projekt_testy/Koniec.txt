@@ -1,0 +1,33 @@
+filozofia:
+	Platon; Uczta
+	Ja; Testy
+	Lem; Summa Technologiae
+
+tragedia:
+	Shakespeare; Hamlet
+
+barok:
+	Shakespeare; Hamlet
+	Ja; Testy
+
+informatyka:
+	Cormen; Algorytmy
+
+podrecznik:
+	Cormen; Algorytmy
+
+klasyka:
+	Mickiewicz; Pan Tadeusz
+
+romantyzm, lektura:
+	Mickiewicz; Pan Tadeusz
+
+romantyzm:
+	Mickiewicz; Pan Tadeusz
+
+lektura:
+	Mickiewicz; Pan Tadeusz
+
+futurologia:
+	Lem; Summa Technologiae
+
