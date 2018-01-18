@@ -44,15 +44,45 @@ ksiazka_ele* dodajKsiazke(ksiazka &ksiazkaGIO, string & autor, string & tytul);
 void przeszukajEtykiety(lista &listaGIO, string & etykieta, ksiazka_ele* ksiazka_do_dodania);
 lista_ele* dodajEtykiete(lista &listaGIO, string & etykieta);
 void dodajKsiazkeDoEtykiety(lista_ele* tu_dodaj, ksiazka_ele* ksiazka_do_dodania);
+void wyswietlPomoc(string program);
 
 
-int main() {
+int main(int argc, char* argv[]) {
 	//Sprawdzenie argumentow inicjalizujacych
+	string zrodlo, wyjscie;
+	if (argc != 5) {
+		wyswietlPomoc(argv[0]);
+	} else {
+		bool in_flag = false;
+		bool out_falg = false;
+		short arg = 1;
+		while (argv[arg]) {
+			if (strcmp("-i", argv[arg]) == 0) {
+				zrodlo = argv[arg + 1];
+				arg += 2;
+				in_flag = true;
+			}
+			else
+				if (strcmp("-o", argv[arg]) == 0) {
+					wyjscie = argv[arg + 1];
+					arg += 2;
+					out_falg = true;
+				}
+				else
+					if (argv[arg] == "-h") {
+						cout << "Sposob uzycia: " << argv[0] << " -i \"Plik_wejsciowy.txt\" -o \"Plik_wyjsciowy.txt\" " << endl;
+						exit(68);
+					}
+					else wyswietlPomoc(argv[0]);
+		}
+		if (in_flag == false || out_falg == false) {
+			wyswietlPomoc(argv[0]);
+		}
+	}
 
 	//Wczytanie pliku
-	string nazwa = "PPK_projekt.txt";
 	ifstream plik;
-	plik.open(nazwa);
+	plik.open(zrodlo);
 	if (!plik.good()) {
 		cerr << "Blad odczytu pliku wejsciowego";
 		exit(1);
@@ -60,11 +90,11 @@ int main() {
 
 	//inicjalizacja struktur?
 	ksiazka wszystkieKsiazki;
-	wszystkieKsiazki.head = nullptr;
-	wszystkieKsiazki.tail = nullptr;
+		wszystkieKsiazki.head = nullptr;
+		wszystkieKsiazki.tail = nullptr;
 	lista wszystkieEtykiety;
-	wszystkieEtykiety.head = nullptr;
-	wszystkieEtykiety.tail = nullptr;
+		wszystkieEtykiety.head = nullptr;
+		wszystkieEtykiety.tail = nullptr;
 
 
 	//Wczytanie danych
@@ -89,6 +119,7 @@ int main() {
 		}
 		rec = rec.substr(pos + 2);
 		do {
+			//wiêcje ni¿ dwie etykiet psuj¹
 			//wymyœliæ jak przeczytaæ tylko jedn¹ etykiete i ja wyizolowaæ i nie zapomnieæ reszty bo póŸniej do niej przejœæ
 			przeszukajEtykiety(wszystkieEtykiety, etykieta, to_dodac);
 			if (znalazl) {
@@ -207,4 +238,11 @@ void dodajKsiazkeDoEtykiety(lista_ele* tu_dodaj, ksiazka_ele* ksiazka_do_dodania
 		tu_dodaj->list_ptr->tail->next = nullptr;
 		//tu_dodaj->list_ptr->tail = tu_dodaj->list_ptr->tail->next;
 	}
+}
+
+//DZIA£A
+void wyswietlPomoc(string program)
+{
+	cerr << "Niepoprawne argumenty sprobuj: " << program << " -i \"Plik_wejsciowy.txt\" -o \"Plik_wyjsciowy.txt\" " << endl;
+	exit(69);
 }
