@@ -1,5 +1,6 @@
 Platon; Uczta; filozofia
 Shakespeare; Hamlet; tragedia, barok
+Ja; Testy; filozofia, barok
 Cormen; Algorytmy; informatyka, podrecznik
 Mickiewicz; Pan Tadeusz; klasyka, romantyzm, lektura
 Lem; Summa Technologiae; filozofia, futurologia

@@ -122,25 +122,27 @@ int main() {
 	cout << "DOBRZE PRAWIE DOBRZE!";
 	return 0;
 }
-//TO KURWA DZIALA
+//TO DZIALA
 ksiazka_ele * dodajKsiazke(ksiazka & ksiazkaGIO, string & autor, string & tytul) {
 	if (ksiazkaGIO.head == nullptr) {
-		ksiazkaGIO.head = new ksiazka_ele{ autor,tytul,new ksiazka_ele };
-		ksiazkaGIO.tail = ksiazkaGIO.head->next;
-		ksiazkaGIO.tail->next = nullptr;
+		ksiazkaGIO.head = new ksiazka_ele{ autor,tytul,nullptr };
+		ksiazkaGIO.tail = ksiazkaGIO.head;
+		//ksiazkaGIO.tail->next = nullptr;
 		return ksiazkaGIO.head;
 	}
 	else {
+		ksiazkaGIO.tail->next = new ksiazka_ele;
+		ksiazkaGIO.tail = ksiazkaGIO.tail->next;
 		ksiazka_ele * tmp = ksiazkaGIO.tail;
 		ksiazkaGIO.tail->author = autor;
 		ksiazkaGIO.tail->title = tytul;
-		ksiazkaGIO.tail->next = new ksiazka_ele;
-		ksiazkaGIO.tail = ksiazkaGIO.tail->next;
+		ksiazkaGIO.tail->next = nullptr;
+		//ksiazkaGIO.tail = ksiazkaGIO.tail->next;
 		return tmp;
 	}
 }
 
-//DO PRZETESTOWANIA
+//DZIA£A
 void przeszukajEtykiety(lista &listaGIO, string & etykieta, ksiazka_ele* ksiazka_do_dodania) {
 	//LISTA PUSTA
 	if (listaGIO.head == nullptr) {
@@ -166,39 +168,43 @@ void przeszukajEtykiety(lista &listaGIO, string & etykieta, ksiazka_ele* ksiazka
 	}
 }
 
-//DO TESTOWANIA
+//DZIA£A
 lista_ele* dodajEtykiete(lista & listaGIO, string & etykieta) {
 	//PUSTA LISTA
 	if (listaGIO.head == nullptr) {
-		listaGIO.head = new lista_ele{ etykieta,new wsk_ksiazka{ nullptr,nullptr } , new lista_ele };
-		listaGIO.tail = listaGIO.head->next;
-		listaGIO.tail->next = nullptr;
+		listaGIO.head = new lista_ele{ etykieta,new wsk_ksiazka{ nullptr,nullptr } , nullptr };
+		listaGIO.tail = listaGIO.head;
+		//listaGIO.tail->next = nullptr;
 		return listaGIO.head;
 	}
 	//DODANIE NA KONIEC
 	else {
+		listaGIO.tail->next = new lista_ele;
+		listaGIO.tail = listaGIO.tail->next;
 		lista_ele* tmp_tu_dodaj = listaGIO.tail;
 		listaGIO.tail->label = etykieta;
 		listaGIO.tail->list_ptr = new wsk_ksiazka{ nullptr,nullptr };
-		listaGIO.tail->next = new lista_ele;
-		listaGIO.tail = listaGIO.tail->next;
+		//listaGIO.tail->next = new lista_ele;
+		//listaGIO.tail = listaGIO.tail->next;
 		listaGIO.tail->next = nullptr;
 		return tmp_tu_dodaj;
 	}
 
 }
 
-//DO TESTOWANIA
+//DZIA£A
 void dodajKsiazkeDoEtykiety(lista_ele* tu_dodaj, ksiazka_ele* ksiazka_do_dodania) {
 	//PIERWSZA KSIAZKA DO ETYKIETY
 	if (tu_dodaj->list_ptr->head == nullptr) {
-		tu_dodaj->list_ptr->head = new wsk_ksiazka_ele{ ksiazka_do_dodania, new wsk_ksiazka_ele };
-		tu_dodaj->list_ptr->tail = tu_dodaj->list_ptr->head->next;
+		tu_dodaj->list_ptr->head = new wsk_ksiazka_ele{ ksiazka_do_dodania, nullptr };
+		tu_dodaj->list_ptr->tail = tu_dodaj->list_ptr->head;
 	}
 	//KOLEJNA KSIAZKA DO TEJ ETYKIETY
 	else {
-		tu_dodaj->list_ptr->tail->ptr_to_ksiazka = ksiazka_do_dodania;
 		tu_dodaj->list_ptr->tail->next = new wsk_ksiazka_ele;
 		tu_dodaj->list_ptr->tail = tu_dodaj->list_ptr->tail->next;
+		tu_dodaj->list_ptr->tail->ptr_to_ksiazka = ksiazka_do_dodania;
+		tu_dodaj->list_ptr->tail->next = nullptr;
+		//tu_dodaj->list_ptr->tail = tu_dodaj->list_ptr->tail->next;
 	}
 }
