@@ -1,0 +1,5 @@
+Platon; Uczta; filozofia
+Shakespeare; Hamlet; tragedia, barok
+Cormen; Algorytmy; informatyka, podrecznik
+Mickiewicz; Pan Tadeusz; klasyka, romantyzm, lektura
+Lem; Summa Technologiae; filozofia, futurologia
