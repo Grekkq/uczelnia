@@ -85,17 +85,18 @@ int main(int argc, char* argv[]) {
 	plik.open(zrodlo);
 	if (!plik.good()) {
 		cerr << "Blad odczytu pliku wejsciowego";
-		exit(1);
+		exit(33);
 	}
 
-	//inicjalizacja struktur?
+	//Inicjalizacja struktur
+	{
 	ksiazka wszystkieKsiazki;
 		wszystkieKsiazki.head = nullptr;
 		wszystkieKsiazki.tail = nullptr;
 	lista wszystkieEtykiety;
 		wszystkieEtykiety.head = nullptr;
 		wszystkieEtykiety.tail = nullptr;
-
+	}
 
 	//Wczytanie danych
 	string rec;
@@ -140,20 +141,23 @@ int main(int argc, char* argv[]) {
 			//pos = rec.find(", ");
 		} while (etykieta.length());
 	}
+	plik.close();
+
+	//Zapisanie wczytanych danych
+	ofstream plik_wy;
+	plik_wy.open(wyjscie);
+	if (!plik_wy.good()) {
+		cerr << "Blad zapisu pliku wyjsciowego";
+		exit(404);
+	}
 
 
-	//for(int i = 0; i <5; i++) nie dziala bo to nie string w zmiennej tylko sam a przekazuje przez wartosc
-	/*
-	string test1 = "Ja", test2 = "Ja2", test3 = "Ja3", test = "Bo nie ty";
-	dodajKsiazke(wszystkieKsiazki, test1, test);
-	dodajKsiazke(wszystkieKsiazki, test2, test);
-	dodajKsiazke(wszystkieKsiazki, test3, test);
-	*/
+
 
 	cout << "DOBRZE PRAWIE DOBRZE!";
 	return 0;
 }
-//TO DZIALA
+//DZIALA
 ksiazka_ele * dodajKsiazke(ksiazka & ksiazkaGIO, string & autor, string & tytul) {
 	if (ksiazkaGIO.head == nullptr) {
 		ksiazkaGIO.head = new ksiazka_ele{ autor,tytul,nullptr };
@@ -223,7 +227,7 @@ lista_ele* dodajEtykiete(lista & listaGIO, string & etykieta) {
 
 }
 
-//DZIA£A
+//DZIA£A bez sotrowania
 void dodajKsiazkeDoEtykiety(lista_ele* tu_dodaj, ksiazka_ele* ksiazka_do_dodania) {
 	//PIERWSZA KSIAZKA DO ETYKIETY
 	if (tu_dodaj->list_ptr->head == nullptr) {
@@ -246,3 +250,6 @@ void wyswietlPomoc(string program)
 	cerr << "Niepoprawne argumenty sprobuj: " << program << " -i \"Plik_wejsciowy.txt\" -o \"Plik_wyjsciowy.txt\" " << endl;
 	exit(69);
 }
+
+
+//PISZE SIE
