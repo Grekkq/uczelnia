@@ -1,6 +1,7 @@
 #include <iostream> //test
 #include <fstream>
 #include <string>
+#include <sstream> //istringstream::iss
 
 using namespace std;
 
@@ -40,7 +41,7 @@ struct lista {
 	lista_ele *tail;
 };
 
-ksiazka_ele* dodajKsiazke(ksiazka &ksiazkaGIO, string & autor, string & tytul);
+ksiazka_ele * dodajKsiazke(ksiazka & ksiazkaGIO, string & autor, string & tytul);
 void przeszukajEtykiety(lista &listaGIO, string & etykieta, ksiazka_ele* ksiazka_do_dodania);
 lista_ele* dodajEtykiete(lista &listaGIO, string & etykieta);
 void dodajKsiazkeDoEtykiety(lista_ele* tu_dodaj, ksiazka_ele* ksiazka_do_dodania);
@@ -96,9 +97,8 @@ int main(int argc, char* argv[]) {
 		wszystkieEtykiety.head = nullptr;
 		wszystkieEtykiety.tail = nullptr;
 
-	//Wczytanie danych
-	string rec;
-	string autor, tytul, etykieta;
+	//Wczytanie danych z pliku wejsciowego
+	string rec, autor, tytul, etykieta;
 	while (getline(plik_we, rec)) {
 		//autor i tytul
 		size_t pos = rec.find("; ");
@@ -107,38 +107,16 @@ int main(int argc, char* argv[]) {
 		pos = rec.find("; ");
 		tytul = rec.substr(0, pos);
 		rec = rec.substr(pos + 2);
-		ksiazka_ele* to_dodac = dodajKsiazke(wszystkieKsiazki, autor, tytul);
+		ksiazka_ele* to_dodac = dodajKsiazke(wszystkieKsiazki, autor, tytul); //dodanie ksiazki
 		//etykiety
-		bool znalazl = true;
-		pos = rec.find(", ");
-		if (pos == string::npos)
-			etykieta = rec; else {
-			etykieta = rec.substr(0, pos);
-			znalazl = false;
+		istringstream etykiety_stream; //przerobienie etykiet na typ istringstream w celu ³atwiejszego zapêtlenia
+		etykiety_stream.str(rec);
+		while (etykiety_stream >> etykieta) {
+			pos = etykieta.find(",");
+			etykieta = etykieta.substr(0, pos);
+			przeszukajEtykiety(wszystkieEtykiety, etykieta, to_dodac);	//dodanie ksi¹¿ki do etykiety i ewentualne jej stworzenie
 		}
-		rec = rec.substr(pos + 2);
-		do {
-			//wiêcje ni¿ dwie etykiet psuj¹
-			//wymyœliæ jak przeczytaæ tylko jedn¹ etykiete i ja wyizolowaæ i nie zapomnieæ reszty bo póŸniej do niej przejœæ
-			przeszukajEtykiety(wszystkieEtykiety, etykieta, to_dodac);
-			if (znalazl) {
-				break;
-			}
-			else {
-				etykieta = rec;
-				przeszukajEtykiety(wszystkieEtykiety, etykieta, to_dodac);
-			}
-			pos = rec.find(", ");
-			if (pos == std::string::npos)
-				break;
-			etykieta = rec.substr(0, pos);
-			rec = rec.substr(pos + 2);
-
-
-			//rec = rec.substr(pos + 2);
-			//pos = rec.find(", ");
-		} while (etykieta.length());
-	}
+	}//Koniec wczytywania danych
 	plik_we.close();
 	
 	//Utworzenie pliku wyjsciowego
@@ -148,11 +126,13 @@ int main(int argc, char* argv[]) {
 	//Zapisanie wczytanych danych
 	wypiszDoPliku(wszystkieEtykiety, plik_wy);
 
+
+
 	cout << "DOBRZE PRAWIE DOBRZE!";
 	return 0;
 }
 //DZIALA
-ksiazka_ele * dodajKsiazke(ksiazka & ksiazkaGIO, string & autor, string & tytul) {
+	ksiazka_ele * dodajKsiazke(ksiazka & ksiazkaGIO, string & autor, string & tytul) {
 	if (ksiazkaGIO.head == nullptr) {
 		ksiazkaGIO.head = new ksiazka_ele{ autor,tytul,nullptr };
 		ksiazkaGIO.tail = ksiazkaGIO.head;
@@ -246,7 +226,7 @@ void wyswietlPomoc(string const & program)
 }
 
 
-//PISZE SIE
+//DZIWNIE DZIALA
 void wypiszDoPliku(lista listaGIO, ofstream & plik) {
 	lista_ele* etykiety_lista = listaGIO.head;
 	while (etykiety_lista) {
@@ -279,6 +259,7 @@ void plikWejsciowy(string const & wejscie, ifstream & plik) {
 	}
 }
 
+//NIE WIEM
 string wyswietlKsiazke(ksiazka_ele* to_wyswietlic) {
 	return "\t" + to_wyswietlic->author + "; " + to_wyswietlic->title +"\n";
 }
