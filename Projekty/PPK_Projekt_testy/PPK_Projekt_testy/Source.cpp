@@ -1,7 +1,7 @@
-#include <iostream> //test
-#include <fstream>
-#include <string>
-#include <sstream> //istringstream::iss
+#include <iostream>	//tylko do wypisywania b³êdów
+#include <fstream>	//do operacji na plikach
+#include <string>	//do operacji na stringach
+#include <sstream>	//istringstream::iss
 
 using namespace std;
 
@@ -10,7 +10,6 @@ struct ksiazka_ele {
 	string author;
 	string title;
 	ksiazka_ele *next;
-	//ksiazka_ele() { next = nullptr; };
 };
 //Pocz¹tek i koniec listy ksi¹¿ek
 struct ksiazka {
@@ -32,7 +31,7 @@ struct wsk_ksiazka {
 //struktura etykiet
 struct lista_ele {
 	string label;
-	wsk_ksiazka *list_ptr; //sortowana wedlug nazwiska
+	wsk_ksiazka *list_ptr; //sortowana wed³ug nazwiska ale bez sortowania 
 	lista_ele *next;
 };
 //Pocz¹tek i koniec listy etykiet
@@ -50,10 +49,12 @@ void wypiszDoPliku(lista listaGIO, ofstream & plik);
 void plikWyjsciowy(string const & wyjscie, ofstream & plik);
 void plikWejsciowy(string const & wejscie, ifstream & plik);
 string wyswietlKsiazke(ksiazka_ele* to_wyswietlic);
+void usunEtykietyIZawartosc(lista & listaGIO);
+void usunKsiazki(ksiazka & listaGIO);
 
 
 int main(int argc, char* argv[]) {
-	//Sprawdzenie argumentow inicjalizujacych
+	//Sprawdzenie argumentów inicjalizujacych
 	string zrodlo, wyjscie;
 	if (argc != 5) {
 		wyswietlPomoc(argv[0]);
@@ -100,15 +101,15 @@ int main(int argc, char* argv[]) {
 	//Wczytanie danych z pliku wejsciowego
 	string rec, autor, tytul, etykieta;
 	while (getline(plik_we, rec)) {
-		//autor i tytul
+		//odczytania autora i tytu³u
 		size_t pos = rec.find("; ");
 		autor = rec.substr(0, pos);
 		rec = rec.substr(pos + 2);
 		pos = rec.find("; ");
 		tytul = rec.substr(0, pos);
 		rec = rec.substr(pos + 2);
-		ksiazka_ele* to_dodac = dodajKsiazke(wszystkieKsiazki, autor, tytul); //dodanie ksiazki
-		//etykiety
+		ksiazka_ele* to_dodac = dodajKsiazke(wszystkieKsiazki, autor, tytul); //dodanie ksi¹¿ki
+		//odczytywanie etykiet
 		istringstream etykiety_stream; //przerobienie etykiet na typ istringstream w celu ³atwiejszego zapêtlenia
 		etykiety_stream.str(rec);
 		while (etykiety_stream >> etykieta) {
@@ -126,17 +127,21 @@ int main(int argc, char* argv[]) {
 	//Zapisanie wczytanych danych
 	wypiszDoPliku(wszystkieEtykiety, plik_wy);
 
+	//Zwalnianie pamiêci
+	usunEtykietyIZawartosc(wszystkieEtykiety);
+	usunKsiazki(wszystkieKsiazki);
+	
+
 
 
 	cout << "DOBRZE PRAWIE DOBRZE!";
 	return 0;
 }
 //DZIALA
-	ksiazka_ele * dodajKsiazke(ksiazka & ksiazkaGIO, string & autor, string & tytul) {
+ksiazka_ele * dodajKsiazke(ksiazka & ksiazkaGIO, string & autor, string & tytul) {
 	if (ksiazkaGIO.head == nullptr) {
 		ksiazkaGIO.head = new ksiazka_ele{ autor,tytul,nullptr };
 		ksiazkaGIO.tail = ksiazkaGIO.head;
-		//ksiazkaGIO.tail->next = nullptr;
 		return ksiazkaGIO.head;
 	}
 	else {
@@ -146,7 +151,6 @@ int main(int argc, char* argv[]) {
 		ksiazkaGIO.tail->author = autor;
 		ksiazkaGIO.tail->title = tytul;
 		ksiazkaGIO.tail->next = nullptr;
-		//ksiazkaGIO.tail = ksiazkaGIO.tail->next;
 		return tmp;
 	}
 }
@@ -225,8 +229,7 @@ void wyswietlPomoc(string const & program)
 	exit(69);
 }
 
-
-//DZIWNIE DZIALA
+//DZIA£A
 void wypiszDoPliku(lista listaGIO, ofstream & plik) {
 	lista_ele* etykiety_lista = listaGIO.head;
 	while (etykiety_lista) {
@@ -259,7 +262,46 @@ void plikWejsciowy(string const & wejscie, ifstream & plik) {
 	}
 }
 
-//NIE WIEM
+//DZIA£A
 string wyswietlKsiazke(ksiazka_ele* to_wyswietlic) {
 	return "\t" + to_wyswietlic->author + "; " + to_wyswietlic->title +"\n";
+}
+
+//SPRAWDZA SIE
+void usunEtykietyIZawartosc(lista & listaGIO) {
+	lista_ele * to_usun_p = listaGIO.head; // przeszukiwanie listy zewnetrzenej
+	wsk_ksiazka_ele * to_unun_n = to_usun_p->list_ptr->head; //przeszukiwanie listy wewnetrznej
+	while (to_usun_p) {
+		//usuwanie struktury wewnetrznej
+		while (to_unun_n) {
+			to_usun_p->list_ptr->head = to_unun_n->next;
+			delete to_unun_n;
+			to_unun_n = to_usun_p->list_ptr->head;
+		}
+		//dla pewnoœci ustawiamy wskaŸniki na pocz¹tek i koniec list wskaŸników na ksi¹¿ki na nullptr
+		to_usun_p->list_ptr->head = nullptr;
+		to_usun_p->list_ptr->tail = nullptr;
+		//usuwanie etykiety
+		listaGIO.head = to_usun_p->next;
+		delete to_usun_p;
+		to_usun_p = listaGIO.head;
+		if(to_usun_p)
+		to_unun_n = to_usun_p->list_ptr->head;
+	}
+	//dla pewnoœci ustawiamy wskŸniki na pocz¹tek i koniec listy etykiet na nullptr
+	listaGIO.head = nullptr;
+	listaGIO.tail = nullptr;
+}
+
+//DZIA£A
+void usunKsiazki(ksiazka & listaGIO) {
+	ksiazka_ele * to_usun = listaGIO.head;
+	while (to_usun) {
+		listaGIO.head = to_usun->next;
+		delete to_usun;
+		to_usun = listaGIO.head;
+	}
+	//dla pewnosci ustawiamy wskaŸniki na pocz¹tek i koniec listy ksi¹¿ek na nullptr
+	listaGIO.head = nullptr;
+	listaGIO.tail = nullptr;
 }
