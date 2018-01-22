@@ -130,11 +130,8 @@ int main(int argc, char* argv[]) {
 	//Zwalnianie pamiêci
 	usunEtykietyIZawartosc(wszystkieEtykiety);
 	usunKsiazki(wszystkieKsiazki);
-	
 
-
-
-	cout << "DOBRZE PRAWIE DOBRZE!";
+	//Wszystko dobrze :D
 	return 0;
 }
 //DZIALA
@@ -278,9 +275,8 @@ void usunEtykietyIZawartosc(lista & listaGIO) {
 			delete to_unun_n;
 			to_unun_n = to_usun_p->list_ptr->head;
 		}
-		//dla pewnoœci ustawiamy wskaŸniki na pocz¹tek i koniec list wskaŸników na ksi¹¿ki na nullptr
-		to_usun_p->list_ptr->head = nullptr;
-		to_usun_p->list_ptr->tail = nullptr;
+		//usuwamy wskaŸniki na pocz¹tek i koniec listy wskaŸników na ksi¹¿ki
+		delete to_usun_p->list_ptr;
 		//usuwanie etykiety
 		listaGIO.head = to_usun_p->next;
 		delete to_usun_p;
