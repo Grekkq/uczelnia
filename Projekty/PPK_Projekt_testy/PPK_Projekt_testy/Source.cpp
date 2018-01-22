@@ -54,33 +54,39 @@ void usunKsiazki(ksiazka & listaGIO);
 
 
 int main(int argc, char* argv[]) {
+	//inicjalizacja zmiennych z nazwami pliku z danymi i pliku wynikowego
+	string zrodlo, wyjscie; 
 	//Sprawdzenie argumentów inicjalizujacych
-	string zrodlo, wyjscie;
-	if (argc != 5) {
+	if (argc != 5) {//nie zgadza siê iloœæ parametrów
 		wyswietlPomoc(argv[0]);
-	} else {
+	} else {//zgadza siê iloœæ parametrów
 		bool in_flag = false;
 		bool out_falg = false;
 		short arg = 1;
+		//przeszukuje wszystkie elementy tablicy w poszukiwaniu parametrów
 		while (argv[arg]) {
+			//sprawdza czy zosta³ podany plik wejœciowy
 			if (strcmp("-i", argv[arg]) == 0) {
 				zrodlo = argv[arg + 1];
 				arg += 2;
 				in_flag = true;
 			}
 			else
+				//sprawdza czy zosta³ podany plik wyjœciowy
 				if (strcmp("-o", argv[arg]) == 0) {
 					wyjscie = argv[arg + 1];
 					arg += 2;
 					out_falg = true;
 				}
 				else
+					//sprawdza czy zosta³ wywo³any parametr -h
 					if (argv[arg] == "-h") {
 						cout << "Sposob uzycia: " << argv[0] << " -i \"Plik_wejsciowy.txt\" -o \"Plik_wyjsciowy.txt\" " << endl;
 						exit(68);
 					}
 					else wyswietlPomoc(argv[0]);
 		}
+		//sprawdza czy oba parametry -i -o zosta³y podane
 		if (in_flag == false || out_falg == false) {
 			wyswietlPomoc(argv[0]);
 		}
@@ -134,13 +140,16 @@ int main(int argc, char* argv[]) {
 	//Wszystko dobrze :D
 	return 0;
 }
-//DZIALA
+
+//dodaje strukturê ksiazka_ele do listy ksi¹¿ek i zwraca wskaŸnik na ni¹
 ksiazka_ele * dodajKsiazke(ksiazka & ksiazkaGIO, string & autor, string & tytul) {
+	//PUSTA LISTA
 	if (ksiazkaGIO.head == nullptr) {
 		ksiazkaGIO.head = new ksiazka_ele{ autor,tytul,nullptr };
 		ksiazkaGIO.tail = ksiazkaGIO.head;
 		return ksiazkaGIO.head;
 	}
+	//JEŒLI NIE DODAJ NA KONIEC
 	else {
 		ksiazkaGIO.tail->next = new ksiazka_ele;
 		ksiazkaGIO.tail = ksiazkaGIO.tail->next;
@@ -152,7 +161,10 @@ ksiazka_ele * dodajKsiazke(ksiazka & ksiazkaGIO, string & autor, string & tytul)
 	}
 }
 
-//DZIA£A
+/*	
+	przeszukuje wszystkie lista_ele w poszukiwaniu etykieta i wywo³uje dodajKsiazkeDoEtykiety
+	jeœli nie znajdzie wywo³uje dodajEtykiete i dodajKsiazkeDoEtykiety
+*/
 void przeszukajEtykiety(lista &listaGIO, string & etykieta, ksiazka_ele* ksiazka_do_dodania) {
 	//LISTA PUSTA
 	if (listaGIO.head == nullptr) {
@@ -178,60 +190,64 @@ void przeszukajEtykiety(lista &listaGIO, string & etykieta, ksiazka_ele* ksiazka
 	}
 }
 
-//DZIA£A
+//dodaje strukturê lista_ele i zwraca wskaŸnik na dodan¹ etykiete
 lista_ele* dodajEtykiete(lista & listaGIO, string & etykieta) {
 	//PUSTA LISTA
 	if (listaGIO.head == nullptr) {
 		listaGIO.head = new lista_ele{ etykieta,new wsk_ksiazka{ nullptr,nullptr } , nullptr };
 		listaGIO.tail = listaGIO.head;
-		//listaGIO.tail->next = nullptr;
 		return listaGIO.head;
 	}
-	//DODANIE NA KONIEC
+	//JEŒLI NIE DODAJ NA KONIEC
 	else {
 		listaGIO.tail->next = new lista_ele;
 		listaGIO.tail = listaGIO.tail->next;
 		lista_ele* tmp_tu_dodaj = listaGIO.tail;
 		listaGIO.tail->label = etykieta;
 		listaGIO.tail->list_ptr = new wsk_ksiazka{ nullptr,nullptr };
-		//listaGIO.tail->next = new lista_ele;
-		//listaGIO.tail = listaGIO.tail->next;
 		listaGIO.tail->next = nullptr;
 		return tmp_tu_dodaj;
 	}
 
 }
-
-//DZIA£A bez sotrowania
+/*
+	dodaje w podane miejsce wskaŸnik na podan¹ ksi¹¿ke
+	powinna jeszscze sortowaæ liste wskaŸników na ksi¹¿ki ale zabrak³o na to czasu
+*/
 void dodajKsiazkeDoEtykiety(lista_ele* tu_dodaj, ksiazka_ele* ksiazka_do_dodania) {
-	//PIERWSZA KSIAZKA DO ETYKIETY
+	//PUSTA LISTA
 	if (tu_dodaj->list_ptr->head == nullptr) {
 		tu_dodaj->list_ptr->head = new wsk_ksiazka_ele{ ksiazka_do_dodania, nullptr };
 		tu_dodaj->list_ptr->tail = tu_dodaj->list_ptr->head;
 	}
-	//KOLEJNA KSIAZKA DO TEJ ETYKIETY
+	//JEŒLI NIE DODAJ NA KONIEC 
+	///A POWINNA SORTOWAC
 	else {
 		tu_dodaj->list_ptr->tail->next = new wsk_ksiazka_ele;
 		tu_dodaj->list_ptr->tail = tu_dodaj->list_ptr->tail->next;
 		tu_dodaj->list_ptr->tail->ptr_to_ksiazka = ksiazka_do_dodania;
 		tu_dodaj->list_ptr->tail->next = nullptr;
-		//tu_dodaj->list_ptr->tail = tu_dodaj->list_ptr->tail->next;
 	}
 }
 
-//DZIA£A
+//Wyœwietla pomoc jeœli parametry przy wywo³aniu zostan¹ podane b³êdnie
 void wyswietlPomoc(string const & program)
 {
 	cerr << "Niepoprawne argumenty sprobuj: " << program << " -i \"Plik_wejsciowy.txt\" -o \"Plik_wyjsciowy.txt\" " << endl;
 	exit(69);
 }
 
-//DZIA£A
+/*
+	zapisuje do podanego pliku podan¹ listê etykiet razem z przypisanymi do niej ksi¹¿kami 
+	za pomoc¹ wyswietlKsiazke ¿eby wypisaæ autora i tytu³ ksi¹¿ki
+*/
 void wypiszDoPliku(lista listaGIO, ofstream & plik) {
 	lista_ele* etykiety_lista = listaGIO.head;
+	//przechodzi przez wszystkie etykiety z listy
 	while (etykiety_lista) {
 		plik << etykiety_lista->label << ":\n";
 		wsk_ksiazka_ele* to_zapisac = etykiety_lista->list_ptr->head;
+		//przechodzi przez wszystkie ksi¹¿ki przypisane do listy
 		while (to_zapisac) {
 			plik << wyswietlKsiazke(to_zapisac->ptr_to_ksiazka);
 			to_zapisac = to_zapisac->next;
@@ -241,7 +257,7 @@ void wypiszDoPliku(lista listaGIO, ofstream & plik) {
 	}
 }
 
-//DZIA£A
+//otwiera i sprawdza poprawnoœæ otwarcia pliku wyjœciowego o podanej nazwie
 void plikWyjsciowy(string const & wyjscie, ofstream & plik) {
 	plik.open(wyjscie);
 	if (!plik.good()) {
@@ -250,7 +266,7 @@ void plikWyjsciowy(string const & wyjscie, ofstream & plik) {
 	}
 }
 
-//DZIA£A
+//otwiera i sprawdza poprawnoœæ otwarcia pliku wejœciowego o podanej nazwie
 void plikWejsciowy(string const & wejscie, ifstream & plik) {
 	plik.open(wejscie,ios_base::app);
 	if (!plik.good()) {
@@ -259,12 +275,12 @@ void plikWejsciowy(string const & wejscie, ifstream & plik) {
 	}
 }
 
-//DZIA£A
+//zwraca string który zawiera autora i tytu³ podanej ksi¹¿ki z tabulatorem na pocz¹tku
 string wyswietlKsiazke(ksiazka_ele* to_wyswietlic) {
 	return "\t" + to_wyswietlic->author + "; " + to_wyswietlic->title +"\n";
 }
 
-//SPRAWDZA SIE
+//usuwa wewnêtrzn¹ listê wskaŸników i etykietê z podanej listy
 void usunEtykietyIZawartosc(lista & listaGIO) {
 	lista_ele * to_usun_p = listaGIO.head; // przeszukiwanie listy zewnetrzenej
 	wsk_ksiazka_ele * to_unun_n = to_usun_p->list_ptr->head; //przeszukiwanie listy wewnetrznej
@@ -289,7 +305,7 @@ void usunEtykietyIZawartosc(lista & listaGIO) {
 	listaGIO.tail = nullptr;
 }
 
-//DZIA£A
+//usuwa ksi¹¿ki z podanej listy
 void usunKsiazki(ksiazka & listaGIO) {
 	ksiazka_ele * to_usun = listaGIO.head;
 	while (to_usun) {
